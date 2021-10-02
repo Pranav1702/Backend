@@ -1,0 +1,205 @@
+Machine 1
+
+$ redis-cli
+127.0.0.1:6379> clear
+127.0.0.1:6379> SUBSCRIBE devsnest
+Reading messages... (press Ctrl-C to quit)
+1) "subscribe"
+2) "devsnest"
+3) (integer) 1
+1) "message"
+2) "devsnest"
+3) "hello"
+1) "message"
+2) "devsnest"
+3) "hello2"
+^C
+tj@LAPTOP-MSJLJRQV:~$ redis-cli
+127.0.0.1:6379> PSUBSCRIBE d
+Reading messages... (press Ctrl-C to quit)
+1) "psubscribe"
+2) "d"
+3) (integer) 1
+^C
+tj@LAPTOP-MSJLJRQV:~$ PSUBSCRIBE d*
+PSUBSCRIBE: command not found
+tj@LAPTOP-MSJLJRQV:~$ redis-cli
+127.0.0.1:6379> PSUBSCRIBE d*
+Reading messages... (press Ctrl-C to quit)
+1) "psubscribe"
+2) "d*"
+3) (integer) 1
+1) "pmessage"
+2) "d*"
+3) "devsnest"
+4) "hello"
+1) "pmessage"
+2) "d*"
+3) "devs"
+4) "hello"
+^C
+tj@LAPTOP-MSJLJRQV:~$ redis-cli
+127.0.0.1:6379> UNSUBSCRIBE devsnest
+1) "unsubscribe"
+2) "devsnest"
+3) (integer) 0
+127.0.0.1:6379> XADD mystream 10000 name
+(error) ERR wrong number of arguments for 'xadd' command
+127.0.0.1:6379> XADD mystream 10000 name Anna
+"10000-0"
+127.0.0.1:6379> XADD mystream 10001 name Bert
+"10001-0"
+127.0.0.1:6379> XADD mystream 10002 name Cathy
+"10002-0"
+127.0.0.1:6379> XADD mystream * name Cathy
+"1633172521023-0"
+127.0.0.1:6379> XADD mystream MAXLEN 100000 name devs
+(error) ERR Invalid stream ID specified as stream command argument
+127.0.0.1:6379> XADD mystream MAXLEN 100000 * name devs
+"1633172603524-0"
+127.0.0.1:6379> XREAD COUNT 200 STREAMS mystream 0
+1) 1) "mystream"
+   2) 1) 1) "10000-0"
+         2) 1) "name"
+            2) "Anna"
+      2) 1) "10001-0"
+         2) 1) "name"
+            2) "Bert"
+      3) 1) "10002-0"
+         2) 1) "name"
+            2) "Cathy"
+      4) 1) "1633172521023-0"
+         2) 1) "name"
+            2) "Cathy"
+      5) 1) "1633172603524-0"
+         2) 1) "name"
+            2) "devs"
+127.0.0.1:6379> XREAD COUNT 200 STREAMS mystream 10002-0
+1) 1) "mystream"
+   2) 1) 1) "1633172521023-0"
+         2) 1) "name"
+            2) "Cathy"
+      2) 1) "1633172603524-0"
+         2) 1) "name"
+            2) "devs"
+127.0.0.1:6379> XREAD BLOCK 10000 STREAMS mystream 0
+1) 1) "mystream"
+   2) 1) 1) "10000-0"
+         2) 1) "name"
+            2) "Anna"
+      2) 1) "10001-0"
+         2) 1) "name"
+            2) "Bert"
+      3) 1) "10002-0"
+         2) 1) "name"
+            2) "Cathy"
+      4) 1) "1633172521023-0"
+         2) 1) "name"
+            2) "Cathy"
+      5) 1) "1633172603524-0"
+         2) 1) "name"
+            2) "devs"
+127.0.0.1:6379> XREAD BLOCK 0 STREAMS mystream 0
+1) 1) "mystream"
+   2) 1) 1) "10000-0"
+         2) 1) "name"
+            2) "Anna"
+      2) 1) "10001-0"
+         2) 1) "name"
+            2) "Bert"
+      3) 1) "10002-0"
+         2) 1) "name"
+            2) "Cathy"
+      4) 1) "1633172521023-0"
+         2) 1) "name"
+            2) "Cathy"
+      5) 1) "1633172603524-0"
+         2) 1) "name"
+            2) "devs"
+127.0.0.1:6379> XREAD BLOCK 0 STREAMS mystream 10002-0
+1) 1) "mystream"
+   2) 1) 1) "1633172521023-0"
+         2) 1) "name"
+            2) "Cathy"
+      2) 1) "1633172603524-0"
+         2) 1) "name"
+            2) "devs"
+127.0.0.1:6379> XREAD BLOCK 10000 STREAMS mystream $
+(nil)
+(10.06s)
+127.0.0.1:6379> XREAD BLOCK 10000 STREAMS mystream $
+1) 1) "mystream"
+   2) 1) 1) "1633172904462-0"
+         2) 1) "name"
+            2) "devsnest"
+(2.62s)
+127.0.0.1:6379> XRANGE mystream 0 -1
+(error) ERR Invalid stream ID specified as stream command argument
+127.0.0.1:6379> XREAD BLOCK 0 STREAMS mystream 0
+1) 1) "mystream"
+   2) 1) 1) "10000-0"
+         2) 1) "name"
+            2) "Anna"
+      2) 1) "10001-0"
+         2) 1) "name"
+            2) "Bert"
+      3) 1) "10002-0"
+         2) 1) "name"
+            2) "Cathy"
+      4) 1) "1633172521023-0"
+         2) 1) "name"
+            2) "Cathy"
+      5) 1) "1633172603524-0"
+         2) 1) "name"
+            2) "devs"
+      6) 1) "1633172904462-0"
+         2) 1) "name"
+            2) "devsnest"
+      7) 1) "1633172916111-0"
+         2) 1) "name"
+            2) "devsnest2"
+127.0.0.1:6379> XRANGE mystream 10000-0 1633172916111-0
+1) 1) "10000-0"
+   2) 1) "name"
+      2) "Anna"
+2) 1) "10001-0"
+   2) 1) "name"
+      2) "Bert"
+3) 1) "10002-0"
+   2) 1) "name"
+      2) "Cathy"
+4) 1) "1633172521023-0"
+   2) 1) "name"
+      2) "Cathy"
+5) 1) "1633172603524-0"
+   2) 1) "name"
+      2) "devs"
+6) 1) "1633172904462-0"
+   2) 1) "name"
+      2) "devsnest"
+7) 1) "1633172916111-0"
+   2) 1) "name"
+      2) "devsnest2"
+127.0.0.1:6379> XRANGE mystream 10000-0 1633172916111-0 COUNT 2
+1) 1) "10000-0"
+   2) 1) "name"
+      2) "Anna"
+2) 1) "10001-0"
+   2) 1) "name"
+      2) "Bert"
+127.0.0.1:6379> XRANGE mystream + - COUNT 2
+(empty list or set)
+127.0.0.1:6379> XRANGE mystream - + COUNT 2
+1) 1) "10000-0"
+   2) 1) "name"
+      2) "Anna"
+2) 1) "10001-0"
+   2) 1) "name"
+      2) "Bert"
+127.0.0.1:6379> XREVRANGE mystream + - COUNT 2
+1) 1) "1633172916111-0"
+   2) 1) "name"
+      2) "devsnest2"
+2) 1) "1633172904462-0"
+   2) 1) "name"
+      2) "devsnest"

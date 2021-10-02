@@ -1,0 +1,39 @@
+$ redis-cli
+127.0.0.1:6379> SUBSCRIBE devsnest
+Reading messages... (press Ctrl-C to quit)
+1) "subscribe"
+2) "devsnest"
+3) (integer) 1
+1) "message"
+2) "devsnest"
+3) "hello"
+1) "message"
+2) "devsnest"
+3) "hello2"
+^C
+tj@LAPTOP-MSJLJRQV:~$ redis-cli
+127.0.0.1:6379> PSUBSCRIBE d*
+Reading messages... (press Ctrl-C to quit)
+1) "psubscribe"
+2) "d*"
+3) (integer) 1
+1) "pmessage"
+2) "d*"
+3) "devsnest"
+4) "hello"
+1) "pmessage"
+2) "d*"
+3) "devs"
+4) "hello"
+1) "pmessage"
+2) "d*"
+3) "devs"
+4) "hello"
+^C
+tj@LAPTOP-MSJLJRQV:~$ PUNSUBSCRIBE d*
+PUNSUBSCRIBE: command not found
+tj@LAPTOP-MSJLJRQV:~$ redis-cli
+127.0.0.1:6379> PUNSUBSCRIBE d*
+1) "punsubscribe"
+2) "d*"
+3) (integer) 0

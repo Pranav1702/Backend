@@ -1,0 +1,17 @@
+$ PUBLISH devsnest hello
+PUBLISH: command not found
+tj@LAPTOP-MSJLJRQV:~$ redis-cli
+127.0.0.1:6379> PUBLISH devsnest hello
+(integer) 2
+127.0.0.1:6379> PUBLISH devsnest hello2
+(integer) 2
+127.0.0.1:6379> PUBLISH devsnest hello
+(integer) 2
+127.0.0.1:6379> PUBLISH devs hello
+(integer) 2
+127.0.0.1:6379> PUBLISH devs hello
+(integer) 1
+127.0.0.1:6379> XADD mystream * name devsnest
+"1633172904462-0"
+127.0.0.1:6379> XADD mystream * name devsnest2
+"1633172916111-0"
