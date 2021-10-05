@@ -1,0 +1,15 @@
+
+->Deployment on AWS
+
+->https://www.youtube.com/watch?v=hpfQxTCGixM
+
+->ssh -> to access an IP address
+
+chmod 400 <downloaded config file>
+ssh -i "<downloaded config file>" <link>
+
+->install curl
+
+->install nvm
+
+-> forever -> package to start server in background
